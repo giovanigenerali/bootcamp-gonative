@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
-
+import PropTypes from 'prop-types';
 import {
-  View, Text, TextInput, TouchableOpacity, StatusBar,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  AsyncStorage,
+  ActivityIndicator,
 } from 'react-native';
 
 import api from '~/services/api';
@@ -9,16 +15,47 @@ import api from '~/services/api';
 import styles from './styles';
 
 export default class Welcome extends Component {
-  state = {
-    username: '',
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
   };
 
-  signIn = () => {
+  state = {
+    username: '',
+    loading: false,
+    error: false,
+  };
+
+  checkUserExists = async (username) => {
+    const user = await api.get(`/users/${username}`);
+
+    return user;
+  };
+
+  saveUser = async (username) => {
+    await AsyncStorage.setItem('@Githuber:username', username);
+  };
+
+  signIn = async () => {
     const { username } = this.state;
+    const { navigation } = this.props;
+
+    this.setState({ loading: true });
+
+    try {
+      await this.checkUserExists(username);
+      await this.saveUser(username);
+
+      navigation.navigate('User');
+    } catch (err) {
+      this.setState({ loading: false, error: true });
+    }
   };
 
   render() {
-    const { username } = this.state;
+    const { username, loading, error } = this.state;
+
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
@@ -27,6 +64,8 @@ export default class Welcome extends Component {
         <Text style={styles.text}>
           Para continuar precisamos que você informe o seu usuário no Github.
         </Text>
+
+        {error ? <Text style={styles.error}>Usuário não encontrado.</Text> : null}
 
         <View style={styles.form}>
           <TextInput
@@ -40,7 +79,11 @@ export default class Welcome extends Component {
             onChangeText={text => this.setState({ username: text })}
           />
           <TouchableOpacity style={styles.button} onPress={this.signIn}>
-            <Text style={styles.buttonText}>Prosseguir</Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Prosseguir</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

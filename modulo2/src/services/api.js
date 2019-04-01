@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const api = axios.Create({
+const api = axios.create({
   baseURL: 'https:/api.github.com',
 });
 
