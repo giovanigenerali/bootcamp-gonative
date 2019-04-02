@@ -17,6 +17,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  description: {
+    fontSize: 12,
+    marginTop: metrics.baseMargin / 2,
+  },
+
   infoContainer: {
     flexDirection: 'row',
     marginTop: metrics.baseMargin,
