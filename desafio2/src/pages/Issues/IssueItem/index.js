@@ -12,8 +12,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import styles from './styles';
 
-console.tron.log(moment.locale());
-
 const IssueItem = ({ issue }) => (
   <TouchableOpacity onPress={() => Linking.openURL(issue.html_url)}>
     <View style={styles.issue} key={`${issue.id}`}>
