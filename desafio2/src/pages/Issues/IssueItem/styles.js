@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 
   issueUser: {
     color: colors.regular,
-    fontSize: 14,
+    fontSize: 13,
   },
 
   externalLink: {
