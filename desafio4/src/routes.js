@@ -1,11 +1,13 @@
+import React from 'react';
 import {
   createAppContainer,
-  // createSwitchNavigator,
   createBottomTabNavigator,
   createStackNavigator,
 } from 'react-navigation';
 
-import { Platform, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import { Platform } from 'react-native';
 
 import { colors } from '~/styles';
 
@@ -13,33 +15,9 @@ import Home from '~/pages/Home';
 import Details from '~/pages/Details';
 import Cart from '~/pages/Cart';
 
-// const Routes = createAppContainer(
-//   createSwitchNavigator({
-//     Main: createBottomTabNavigator(
-//       {
-//         Home,
-//         Cart,
-//       },
-//       {
-//         initialRouteName: 'Home',
-//         tabBarOptions: {
-//           showIcon: true,
-//           showLabel: false,
-//           activeTintColor: colors.primary,
-//           inactiveTintColor: colors.regular,
-//           style: {
-//             backgroundColor: colors.white,
-//           },
-//         },
-//       },
-//     ),
-//     Details,
-//   }),
-// );
-
 const navigationOptions = {
   headerStyle: {
-    height: Platform.OS === 'ios' ? 74 : 54,
+    height: Platform.OS === 'ios' ? 64 : 44,
     paddingTop: Platform.OS === 'ios' ? 40 : 20,
     backgroundColor: colors.white,
     borderBottomWidth: 0,
@@ -47,80 +25,61 @@ const navigationOptions = {
     shadowOpacity: 0,
   },
   headerTitleStyle: {
+    color: colors.primary,
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.secondary,
   },
   headerTintColor: colors.regular,
-  headerBackTitle: null,
+  headerBackTitleStyle: {
+    color: colors.regular,
+  },
+};
+
+const getTabBarIcon = (navigation, tintColor) => {
+  const { routeName } = navigation.state;
+  let iconName;
+  if (routeName === 'Home') {
+    iconName = 'home';
+  } else if (routeName === 'Cart') {
+    iconName = 'shopping-cart';
+  }
+  return <Icon name={iconName} size={26} color={tintColor} />;
 };
 
 const Routes = createAppContainer(
   createBottomTabNavigator(
     {
-      Main: createStackNavigator(
+      Home: createStackNavigator(
         {
-          Home,
-          Details,
+          Home: { screen: Home, navigationOptions },
+          Details: { screen: Details, navigationOptions },
         },
         {
           initialRouteName: 'Home',
-          navigationOptions,
+          headerBackTitleVisible: false,
         },
       ),
       Cart: createStackNavigator(
         {
-          Cart,
+          Cart: { screen: Cart, navigationOptions },
         },
         {
           initialRouteName: 'Cart',
-          navigationOptions,
+          headerBackTitleVisible: false,
         },
       ),
     },
     {
-      tabBarPosition: 'bottom',
+      defaultNavigationOptions: ({ navigation }) => ({
+        tabBarIcon: ({ tintColor }) => getTabBarIcon(navigation, tintColor),
+      }),
       tabBarOptions: {
-        showIcon: true,
         showLabel: false,
-        activeTintColor: colors.secondary,
-        inactiveTintColor: colors.gray,
-        style: {
-          height: Platform.OS === 'ios' ? 74 : 54,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 0,
-          backgroundColor: colors.white,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.lighter,
-        },
-        indicatorStyle: {
-          height: 0,
-        },
+        activeTintColor: colors.primary,
+        inactiveTintColor: colors.regular,
       },
     },
   ),
 );
-
-// const HomeStack = createStackNavigator({
-//   Home,
-//   Details,
-// });
-
-// const CartStack = createStackNavigator({
-//   Cart,
-// });
-
-// const Routes = createAppContainer(
-//   createBottomTabNavigator(
-//     {
-//       Home: HomeStack,
-//       Cart: CartStack,
-//     },
-//     {
-//       /* Other configuration remains unchanged */
-//     },
-//   ),
-// );
 
 export default Routes;
