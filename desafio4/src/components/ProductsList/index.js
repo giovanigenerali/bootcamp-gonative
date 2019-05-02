@@ -6,7 +6,6 @@ import 'numeral/locales/pt-br';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
 import ProductsActions from '~/store/ducks/products';
 
 import {
@@ -25,12 +24,15 @@ Numeral.locale('pt-br');
 
 class ProductsList extends Component {
   static propTypes = {
-    loadProducts: PropTypes.func,
+    loadProductsRequest: PropTypes.func.isRequired,
     categoryId: PropTypes.number,
     products: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
+        image: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
+        brand: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
       }),
     ),
     loading: PropTypes.bool.isRequired,
@@ -42,20 +44,18 @@ class ProductsList extends Component {
   static defaultProps = {
     categoryId: null,
     products: null,
-    loadProducts: null,
   };
 
   componentDidMount() {
-    const { categoryId, loadProducts } = this.props;
-    if (categoryId) {
-      loadProducts(categoryId);
-    }
+    const { categoryId, loadProductsRequest } = this.props;
+
+    loadProductsRequest(categoryId);
   }
 
   handleProductPress = (productId) => {
     const { navigation } = this.props;
 
-    navigation.navigate('Details', { id: productId });
+    navigation.navigate('Details', { productId });
   };
 
   render() {
@@ -65,7 +65,7 @@ class ProductsList extends Component {
       <Container>
         {loading && <Loading size="small" color="#333" />}
 
-        {!loading && (
+        {!loading && products && (
           <List
             numColumns={2}
             data={products}
