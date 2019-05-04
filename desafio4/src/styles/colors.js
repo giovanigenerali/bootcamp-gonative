@@ -1,5 +1,6 @@
 export default {
   white: '#fff',
+  whiteLighter: '#fafafa',
   lighter: '#f2f2f2',
   light: '#ddd',
   regular: '#999',

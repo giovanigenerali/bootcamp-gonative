@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Numeral from 'numeral';
@@ -6,6 +7,7 @@ import 'numeral/locales/pt-br';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ProductActions from '~/store/ducks/product';
+import CartActions from '~/store/ducks/cart';
 
 import {
   Container,
@@ -29,6 +31,7 @@ class Details extends Component {
 
   static propTypes = {
     loadProductRequest: PropTypes.func.isRequired,
+    addCart: PropTypes.func.isRequired,
     productDetail: PropTypes.shape({
       loading: PropTypes.bool.isRequired,
       product: PropTypes.arrayOf(
@@ -52,6 +55,14 @@ class Details extends Component {
     loadProductRequest(productId);
   }
 
+  addToCart = (product) => {
+    const { navigation, addCart } = this.props;
+
+    addCart({ ...product, quantity: 1 });
+
+    navigation.navigate('Cart');
+  };
+
   render() {
     const { productDetail } = this.props;
     const { data: product, loading } = productDetail;
@@ -72,7 +83,7 @@ class Details extends Component {
               </ProductInfo>
               <ProductPrice>{Numeral(product.price).format('$ 0,0.00')}</ProductPrice>
             </ProductDetails>
-            <ButtomAddToCart>
+            <ButtomAddToCart onPress={() => this.addToCart(product)}>
               <AddToCart>Adicionar ao carrinho</AddToCart>
             </ButtomAddToCart>
           </Product>
@@ -86,7 +97,7 @@ const mapStateToProps = state => ({
   productDetail: state.product,
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(ProductActions, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({ ...ProductActions, ...CartActions }, dispatch);
 
 export default connect(
   mapStateToProps,
